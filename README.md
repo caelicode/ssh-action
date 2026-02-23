@@ -1,6 +1,7 @@
 # SSH Remote Commands
 
 [![CI](https://github.com/caelicode/ssh-action/actions/workflows/ci.yml/badge.svg)](https://github.com/caelicode/ssh-action/actions/workflows/ci.yml)
+[![Release](https://github.com/caelicode/ssh-action/actions/workflows/release.yml/badge.svg)](https://github.com/caelicode/ssh-action/actions/workflows/release.yml)
 
 A GitHub Action to execute commands on remote servers via SSH. Uses native OpenSSH — no external binaries downloaded at runtime. Supports key and password authentication, environment variable forwarding, multi-host execution, jump/bastion hosts, configurable timeouts, and stdout capture.
 
@@ -167,6 +168,27 @@ A GitHub Action to execute commands on remote servers via SSH. Uses native OpenS
 6. Wraps execution with `timeout` if `command_timeout > 0`
 7. Captures stdout to `$GITHUB_OUTPUT` (even on failure)
 8. Cleans up SSH agent on exit via trap
+
+## Migrating from appleboy/ssh-action
+
+The input names are designed to be a drop-in replacement. In most cases you only need to change the `uses:` line:
+
+```diff
+- uses: appleboy/ssh-action@v1
++ uses: caelicode/ssh-action@v1
+```
+
+Input mapping for less common features:
+
+| appleboy/ssh-action | caelicode/ssh-action | Notes |
+|---|---|---|
+| `script_path` | `script_file` | Reads a local file and pipes it to the remote shell |
+| `proxy_host` | `proxy_host` | Same name, uses native `ProxyJump` instead of custom proxy |
+| `request_pty` | `request_pty` | Same |
+| `command_timeout` | `command_timeout` | Default changed from `10m` to `600` (seconds instead of duration string) |
+| `capture_stdout` | _(always on)_ | Stdout is always captured to `outputs.stdout` |
+| `use_insecure_cipher` | `args: -o Ciphers=...` | Pass specific ciphers via `args` instead |
+| `allenvs` | _(not supported)_ | Use explicit `envs` list for security |
 
 ## License
 
