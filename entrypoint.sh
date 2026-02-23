@@ -3,17 +3,6 @@
 # Execute commands on remote servers via SSH with key-based or password auth,
 # environment variable forwarding, jump host support, multi-host execution,
 # and configurable timeouts.
-#
-# Improvements over appleboy/ssh-action:
-#   - Native OpenSSH (no external Go binary download on every run)
-#   - Script piped via stdin (avoids shell argument length limits & escaping bugs)
-#   - Custom remote shell support (bash, sh, zsh)
-#   - Proper multi-host sequential execution with per-host error reporting
-#   - Jump/bastion host support via ProxyJump
-#   - Host key fingerprint verification
-#   - Script file support (script_file input)
-#   - Stdout captured even on non-zero exit (appleboy drops it)
-#   - No binary caching issues or platform detection failures
 set -euo pipefail
 
 # ── Helpers ──────────────────────────────────────────────────────────
