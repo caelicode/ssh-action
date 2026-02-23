@@ -206,7 +206,7 @@ for raw_host in "${HOSTS[@]}"; do
   endlog
 done
 
-# ── Set output (even on failure — unlike appleboy) ──────────────────
+# ── Set output (always captured, even on failure) ───────────────────
 {
   echo "stdout<<CAELICODE_EOF"
   cat "$STDOUT_FILE"

@@ -5,18 +5,18 @@
 
 A GitHub Action to execute commands on remote servers via SSH. Uses native OpenSSH — no external binaries downloaded at runtime. Supports key and password authentication, environment variable forwarding, multi-host execution, jump/bastion hosts, configurable timeouts, and stdout capture.
 
-## Why not appleboy/ssh-action?
+## Features
 
-| | caelicode/ssh-action | appleboy/ssh-action |
-|---|---|---|
-| Runtime | Native OpenSSH | Downloads Go binary every run |
-| Script transport | Piped via stdin (no length limits) | Passed as argument (escaping issues) |
-| Custom shell | `bash`, `sh`, `zsh` via `remote_shell` | Not supported |
-| Multi-host errors | Per-host error reporting | Fails silently on some hosts |
-| Stdout on failure | Always captured | Dropped on non-zero exit |
-| Jump host | Native `ProxyJump` | Custom proxy implementation |
-| Script file | `script_file` input | `script_path` (different behavior) |
-| Dependencies | Zero (uses runner's SSH) | Requires Go binary download + caching |
+- **Zero dependencies** — uses the runner's built-in OpenSSH, no binaries to download or cache
+- **Key and password auth** — RSA, ED25519, ECDSA keys or password via `sshpass`
+- **Multi-host execution** — comma-separated hosts with per-host error reporting
+- **Jump/bastion host** — native `ProxyJump` support for reaching hosts behind firewalls
+- **Environment forwarding** — securely pass GitHub secrets to the remote shell
+- **Custom remote shell** — execute via `bash`, `sh`, `zsh`, or any shell on the target
+- **Script file support** — run a local script file instead of inline commands
+- **Stdout capture** — command output always available in `outputs.stdout`, even on failure
+- **Configurable timeouts** — separate connection and command execution timeouts
+- **Host key verification** — accept-new by default, or strict SHA256 fingerprint checking
 
 ## Usage
 
@@ -168,27 +168,6 @@ A GitHub Action to execute commands on remote servers via SSH. Uses native OpenS
 6. Wraps execution with `timeout` if `command_timeout > 0`
 7. Captures stdout to `$GITHUB_OUTPUT` (even on failure)
 8. Cleans up SSH agent on exit via trap
-
-## Migrating from appleboy/ssh-action
-
-The input names are designed to be a drop-in replacement. In most cases you only need to change the `uses:` line:
-
-```diff
-- uses: appleboy/ssh-action@v1
-+ uses: caelicode/ssh-action@v1
-```
-
-Input mapping for less common features:
-
-| appleboy/ssh-action | caelicode/ssh-action | Notes |
-|---|---|---|
-| `script_path` | `script_file` | Reads a local file and pipes it to the remote shell |
-| `proxy_host` | `proxy_host` | Same name, uses native `ProxyJump` instead of custom proxy |
-| `request_pty` | `request_pty` | Same |
-| `command_timeout` | `command_timeout` | Default changed from `10m` to `600` (seconds instead of duration string) |
-| `capture_stdout` | _(always on)_ | Stdout is always captured to `outputs.stdout` |
-| `use_insecure_cipher` | `args: -o Ciphers=...` | Pass specific ciphers via `args` instead |
-| `allenvs` | _(not supported)_ | Use explicit `envs` list for security |
 
 ## License
 
