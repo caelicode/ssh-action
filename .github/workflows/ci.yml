@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']
+  pull_request:
+    branches: ['**']
+    paths-ignore: ['**.md']
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run ShellCheck
+        run: shellcheck -x entrypoint.sh
+
+  validate:
+    name: Action Syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate action.yml
+        run: |
+          python3 -c "
+          import yaml, sys
+          with open('action.yml') as f:
+              data = yaml.safe_load(f)
+          required_fields = ['name', 'inputs', 'runs']
+          for field in required_fields:
+              assert field in data, f'Missing required field: {field}'
+          assert data['runs']['using'] == 'composite', 'Expected composite action'
+          required_inputs = ['host', 'username']
+          for inp in required_inputs:
+              assert inp in data['inputs'], f'Missing required input: {inp}'
+          print('action.yml is valid')
+          "
+
+      - name: Verify entrypoint is executable
+        run: test -x entrypoint.sh || (echo '::error::entrypoint.sh is not executable' && exit 1)
