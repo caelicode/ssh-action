@@ -1,5 +1,5 @@
-name: 'SSH Remote Commands'
-description: 'Execute commands on a remote server via SSH with key-based authentication, environment variable forwarding, and timeout control.'
+name: 'CaeliCode SSH'
+description: 'Execute remote commands via SSH with key auth, env forwarding, multi-host, and timeout control.'
 author: 'CaeliCode'
 
 branding:
